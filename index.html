@@ -741,10 +741,16 @@ body::before {
   box-shadow: 0 0 8px var(--green-glow);
 }
 .tab-icon {
-  font-size: 20px; display: block; margin-bottom: 2px;
+  display: block; margin-bottom: 3px;
   transition: transform 0.2s;
+  height: 22px;
 }
-.tab.active .tab-icon { transform: scale(1.05); }
+.tab-icon svg {
+  width: 22px; height: 22px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.tab.active .tab-icon { transform: scale(1.08); }
 .page { display: none; position: relative; z-index: 1; }
 .page.active { display: block; animation: fadeIn 0.25s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -867,7 +873,7 @@ body::before {
   <div class="day-detail-panel" id="day-detail-panel"></div>
 </div>
 
-<button class="timer-fab" id="timer-fab" onclick="openTimer()">&#9201;</button>
+<button class="timer-fab" id="timer-fab" onclick="openTimer()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M10 2h4M12 2v3"/></svg></button>
 
 <div class="timer-overlay" id="timer-overlay">
   <button class="timer-close" onclick="closeTimer()">&times;</button>
@@ -887,16 +893,16 @@ body::before {
 
 <div class="tab-bar">
   <button class="tab active" onclick="showPage('home')">
-    <span class="tab-icon">&#127968;</span>Dzisiaj
+    <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg></span>Dzisiaj
   </button>
   <button class="tab" onclick="showPage('all')">
-    <span class="tab-icon">&#128170;</span>Treningi
+    <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.5" stroke-width="1.5"/></svg></span>Treningi
   </button>
   <button class="tab" onclick="showPage('stats')">
-    <span class="tab-icon">&#128200;</span>Statystyki
+    <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M16 4v16M12 8v12M8 12v8M4 16v4M20 2v18"/></svg></span>Statystyki
   </button>
   <button class="tab" onclick="showPage('settings')">
-    <span class="tab-icon">&#9881;</span>Ustawienia
+    <span class="tab-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>Ustawienia
   </button>
 </div>
 
@@ -1048,6 +1054,7 @@ function sameDay(a, b) { return a.getDate() === b.getDate() && a.getMonth() === 
 function toDateStr(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
 const YT_SVG = `<svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2 31.4 31.4 0 000 12a31.4 31.4 0 00.5 5.8 3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1A31.4 31.4 0 0024 12a31.4 31.4 0 00-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>`;
+const TIMER_SVG = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M10 2h4M12 2v3"/></svg>`;
 
 function getWeightKey(exName) { return 'w_' + exName.replace(/\s+/g, '_').toLowerCase(); }
 function getWeightHistory(exName) {
@@ -1277,7 +1284,7 @@ function startTimer() {
       timerRunning = false;
       document.getElementById('timer-done-msg').style.display = 'block';
       document.getElementById('timer-start-btn').textContent = 'RESTART';
-      document.getElementById('timer-fab').innerHTML = '&#9201;';
+      document.getElementById('timer-fab').innerHTML = TIMER_SVG;
       document.getElementById('timer-fab').classList.remove('running');
       if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 300]);
       try {
