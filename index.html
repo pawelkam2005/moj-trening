@@ -91,6 +91,37 @@ body {
   color: var(--text-dim); border: 1px solid var(--card-border);
 }
 
+/* ====== QUOTE ====== */
+.quote-box {
+  margin: 16px auto 0;
+  max-width: 340px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(124,92,252,0.08), rgba(0,210,160,0.06));
+  border: 1px solid rgba(124,92,252,0.15);
+  border-radius: var(--radius);
+  position: relative;
+}
+.quote-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.55;
+  font-style: italic;
+}
+.quote-author {
+  font-size: 11px;
+  color: var(--purple);
+  font-weight: 700;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+.quote-icon {
+  position: absolute;
+  top: -8px; left: 16px;
+  font-size: 22px;
+  opacity: 0.7;
+}
+
 /* ====== CARDS ====== */
 .training-card {
   background: var(--card);
@@ -399,6 +430,7 @@ body {
     <div class="today-date" id="today-date"></div>
     <div class="today-day" id="today-day"></div>
     <div id="status-badge"></div>
+    <div class="quote-box" id="quote-box"></div>
   </div>
   <div id="today-content"></div>
   <div class="month-calendar">
@@ -462,6 +494,40 @@ body {
 </div>
 
 <script>
+const QUOTES = [
+  {t:"Nie chodzi o to, zeby byc najlepszym. Chodzi o to, zeby byc lepszym niz wczoraj.", a:"Nieznany"},
+  {t:"Bol jest tymczasowy. Rezygnacja jest wieczna.", a:"Lance Armstrong"},
+  {t:"Twoje cialo moze zniesc prawie wszystko. To umysl musisz przekonac.", a:"Nieznany"},
+  {t:"Sukces to suma malych wysilkow powtarzanych dzien po dniu.", a:"Robert Collier"},
+  {t:"Nie licz dni. Spraw, zeby dni sie liczyly.", a:"Muhammad Ali"},
+  {t:"Silownia nie zmienia tylko ciala. Zmienia umysl, nastawienie i nastroj.", a:"Nieznany"},
+  {t:"Jedyny zly trening to ten, ktory sie nie odbyl.", a:"Nieznany"},
+  {t:"Dyscyplina to most miedzy celami a osiagnieciami.", a:"Jim Rohn"},
+  {t:"Nie zatrzymuj sie, kiedy jestes zmeczony. Zatrzymaj sie, kiedy skonczysz.", a:"Nieznany"},
+  {t:"Kazdy mistrz byl kiedys uczniem, ktory nie chcial sie poddac.", a:"Nieznany"},
+  {t:"Ciezka praca bije talent, kiedy talent nie pracuje ciezko.", a:"Tim Notke"},
+  {t:"Twoja jedyna granica to Ty sam.", a:"Nieznany"},
+  {t:"Nie musisz byc ekstremalny, po prostu badz konsekwentny.", a:"Nieznany"},
+  {t:"Marzenia nie dzialaja, dopoki Ty nie zaczniasz dzialac.", a:"John C. Maxwell"},
+  {t:"Najlepszy czas na trening byl wczoraj. Drugi najlepszy czas to teraz.", a:"Nieznany"},
+  {t:"Wyniki przychodza z czasem, nie z dnia na dzien. Pracuj dalej.", a:"Nieznany"},
+  {t:"Sila nie pochodzi z wygrywania. Twoje zmagania buduja sile.", a:"Arnold Schwarzenegger"},
+  {t:"Codziennie rób cos, co przybliza Cie do celu.", a:"Nieznany"},
+  {t:"Motywacja sprawia, ze zaczynasz. Nawyk sprawia, ze kontynuujesz.", a:"Jim Ryun"},
+  {t:"Im ciezej pracujesz, tym lepszym sie stajesz. Bez skrotow.", a:"Nieznany"},
+  {t:"Nie oczekuj rezultatow, jesli nie jestes gotowy na wysilek.", a:"Nieznany"},
+  {t:"To, co dzisiaj boli, jutro Cie wzmocni.", a:"Nieznany"},
+  {t:"Bądz silniejszy niz twoje wymowki.", a:"Nieznany"},
+  {t:"Jedna godzina treningu to tylko 4% Twojego dnia. Nie ma wymowek.", a:"Nieznany"},
+  {t:"Zrob to teraz. Czasem pozniej znaczy nigdy.", a:"Nieznany"},
+  {t:"Nie porownuj sie z innymi. Porownuj sie z soba sprzed miesiaca.", a:"Nieznany"},
+  {t:"Silownia jest jak zycie - dostajesz tyle, ile wlozysz.", a:"Nieznany"},
+  {t:"Nie czekaj na motywacje. Dzialaj, a motywacja przyjdzie.", a:"Nieznany"},
+  {t:"Kazdego dnia masz wybor: poddac sie albo walczyc dalej.", a:"Nieznany"},
+  {t:"Pot to tluszcz, ktory plache.", a:"Nieznany"},
+  {t:"Progres, nie perfekcja.", a:"Nieznany"},
+];
+
 const TRAININGS = [
   {
     name: "Trening 1",
@@ -529,7 +595,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '5';
+const APP_VERSION = '6';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
@@ -651,6 +717,9 @@ function render() {
   const today = new Date(); today.setHours(0,0,0,0);
   document.getElementById('today-date').textContent = formatDate(today);
   document.getElementById('today-day').textContent = DAY_NAMES_FULL[getDayOfWeek(today)];
+  const daysSinceEpoch = Math.floor(today.getTime() / 86400000);
+  const q = QUOTES[daysSinceEpoch % QUOTES.length];
+  document.getElementById('quote-box').innerHTML = `<span class="quote-icon">&#10077;</span><div class="quote-text">${q.t}</div><div class="quote-author">— ${q.a}</div>`;
   const tr = getTrainingForDate(today);
   if (tr) {
     document.getElementById('status-badge').innerHTML = `<span class="status-badge status-training">Dzien treningowy</span>`;
