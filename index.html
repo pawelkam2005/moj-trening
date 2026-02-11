@@ -158,6 +158,126 @@ body {
   100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
 }
 
+/* ====== WEIGHT INPUT ====== */
+.weight-row {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 6px;
+}
+.weight-input {
+  width: 64px;
+  padding: 5px 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px; font-weight: 600;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.weight-input:focus { border-color: var(--green); }
+.weight-input::placeholder { color: var(--text-dim); font-weight: 400; }
+.weight-label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
+.weight-last { font-size: 10px; color: var(--purple); font-weight: 600; }
+
+/* ====== TIMER ====== */
+.timer-fab {
+  position: fixed;
+  bottom: calc(80px + var(--safe-bottom));
+  right: 16px;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green), #00b488);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 90;
+  box-shadow: 0 4px 20px rgba(0,210,160,0.3);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.timer-fab:active { transform: scale(0.92); }
+.timer-fab.running {
+  background: linear-gradient(135deg, var(--orange), #e88a30);
+  box-shadow: 0 4px 20px rgba(255,159,67,0.3);
+  animation: pulse 1.5s infinite;
+}
+.timer-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.timer-overlay.open { opacity: 1; pointer-events: auto; }
+.timer-display {
+  font-size: 72px; font-weight: 900;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px;
+}
+.timer-label {
+  font-size: 14px; color: var(--text-dim);
+  font-weight: 600; margin-bottom: 32px;
+  text-transform: uppercase; letter-spacing: 2px;
+}
+.timer-presets {
+  display: flex; gap: 10px;
+  margin-bottom: 28px;
+}
+.timer-preset {
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-sm);
+  color: var(--text); font-size: 15px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+  transition: all 0.2s;
+}
+.timer-preset:active { transform: scale(0.95); }
+.timer-preset.active {
+  background: var(--green-dim);
+  border-color: rgba(0,210,160,0.3);
+  color: var(--green);
+}
+.timer-actions {
+  display: flex; gap: 14px;
+}
+.timer-start {
+  padding: 16px 40px;
+  background: linear-gradient(135deg, var(--green), #00b488);
+  border: none; border-radius: var(--radius);
+  color: #fff; font-size: 16px; font-weight: 800;
+  font-family: inherit; cursor: pointer;
+  transition: all 0.2s;
+}
+.timer-start:active { transform: scale(0.96); }
+.timer-stop {
+  padding: 16px 40px;
+  background: rgba(255,87,87,0.15);
+  border: 1px solid rgba(255,87,87,0.25);
+  border-radius: var(--radius);
+  color: var(--red); font-size: 16px; font-weight: 800;
+  font-family: inherit; cursor: pointer;
+}
+.timer-close {
+  position: absolute; top: 20px; right: 20px;
+  background: none; border: none;
+  color: var(--text-dim); font-size: 28px;
+  cursor: pointer; padding: 8px;
+}
+.timer-done-msg {
+  font-size: 20px; font-weight: 800;
+  color: var(--green);
+  animation: pulse 0.8s infinite;
+  margin-top: 16px;
+}
+
 /* ====== QUOTE ====== */
 .quote-box {
   margin: 16px auto 0;
@@ -548,6 +668,24 @@ body {
   <div class="day-detail-panel" id="day-detail-panel"></div>
 </div>
 
+<button class="timer-fab" id="timer-fab" onclick="openTimer()">&#9201;</button>
+
+<div class="timer-overlay" id="timer-overlay">
+  <button class="timer-close" onclick="closeTimer()">&times;</button>
+  <div class="timer-label">Odpoczynek miedzy seriami</div>
+  <div class="timer-display" id="timer-display">1:30</div>
+  <div class="timer-presets" id="timer-presets">
+    <button class="timer-preset" onclick="setTimer(60)">1:00</button>
+    <button class="timer-preset active" onclick="setTimer(90)">1:30</button>
+    <button class="timer-preset" onclick="setTimer(120)">2:00</button>
+    <button class="timer-preset" onclick="setTimer(180)">3:00</button>
+  </div>
+  <div class="timer-actions" id="timer-actions">
+    <button class="timer-start" id="timer-start-btn" onclick="startTimer()">START</button>
+  </div>
+  <div class="timer-done-msg" id="timer-done-msg" style="display:none">CZAS WRACAC!</div>
+</div>
+
 <div class="tab-bar">
   <button class="tab active" onclick="showPage('home')">
     <span class="tab-icon">&#127968;</span>Dzisiaj
@@ -662,7 +800,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '9';
+const APP_VERSION = '10';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
@@ -709,7 +847,11 @@ function toDateStr(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padS
 
 const YT_SVG = `<svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2 31.4 31.4 0 000 12a31.4 31.4 0 00.5 5.8 3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1A31.4 31.4 0 0024 12a31.4 31.4 0 00-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>`;
 
-function renderExerciseItem(ex, i, numClass) {
+function getWeightKey(exName) { return 'w_' + exName.replace(/\s+/g, '_').toLowerCase(); }
+function getSavedWeight(exName) { return localStorage.getItem(getWeightKey(exName)) || ''; }
+function saveWeight(exName, val) { if (val) localStorage.setItem(getWeightKey(exName), val); else localStorage.removeItem(getWeightKey(exName)); }
+
+function renderExerciseItem(ex, i, numClass, showWeight) {
   let meta = `<span class="exercise-sets">${ex.sets}s &times; ${ex.reps}</span>`;
   if (ex.ts) meta += `<span class="exercise-timestamp">${ex.ts}</span>`;
   let videoHtml = '';
@@ -717,18 +859,24 @@ function renderExerciseItem(ex, i, numClass) {
     const label = ex.ts ? `Technika ${ex.ts}` : 'Technika';
     videoHtml = `<div><a href="${ex.video}" target="_blank" rel="noopener" class="video-btn">${YT_SVG} ${label}</a></div>`;
   }
-  return `<li class="exercise-item"><div class="exercise-num ${numClass}">${i+1}</div><div class="exercise-info"><div class="exercise-name">${ex.name}</div><div class="exercise-meta">${meta}</div>${videoHtml}</div></li>`;
+  let weightHtml = '';
+  if (showWeight) {
+    const saved = getSavedWeight(ex.name);
+    const lastW = saved ? `<span class="weight-last">ostatnio: ${saved} kg</span>` : '';
+    weightHtml = `<div class="weight-row"><span class="weight-label">Ciezar:</span><input type="number" step="0.5" class="weight-input" placeholder="kg" value="${saved}" onchange="saveWeight('${ex.name.replace(/'/g,"\\'")}', this.value)">${lastW}</div>`;
+  }
+  return `<li class="exercise-item"><div class="exercise-num ${numClass}">${i+1}</div><div class="exercise-info"><div class="exercise-name">${ex.name}</div><div class="exercise-meta">${meta}</div>${weightHtml}${videoHtml}</div></li>`;
 }
 
-function renderTrainingHtml(tr, date) {
+function renderTrainingHtml(tr, date, withWeights) {
   const t = tr.training;
   let html = `<div class="training-card"><h2>${t.name}</h2><div class="subtitle">${t.muscles}</div><ul class="exercise-list">`;
-  t.exercises.forEach((ex, i) => { html += renderExerciseItem(ex, i, ''); });
+  t.exercises.forEach((ex, i) => { html += renderExerciseItem(ex, i, '', withWeights); });
   html += `</ul></div>`;
   if (tr.hasAbs) {
     const abs = getAbsForDate(date);
     html += `<div class="abs-card"><h3>Brzuch</h3><div class="subtitle">Cwiczenia na brzuch</div><ul class="exercise-list">`;
-    abs.forEach((ex, i) => { html += renderExerciseItem(ex, i, 'abs-exercise-num'); });
+    abs.forEach((ex, i) => { html += renderExerciseItem(ex, i, 'abs-exercise-num', false); });
     html += `</ul></div>`;
   }
   return html;
@@ -742,7 +890,7 @@ function openDayDetail(dateStr) {
   if (sameDay(date, today)) html += `<span class="day-detail-badge" style="background:${`var(--purple-glow)`};color:var(--purple);">DZISIAJ</span>`;
   if (tr) {
     html += `<span class="day-detail-badge status-training">TRENING</span>`;
-    html += renderTrainingHtml(tr, date);
+    html += renderTrainingHtml(tr, date, sameDay(date, today));
   } else {
     html += `<span class="day-detail-badge status-rest">ODPOCZYNEK</span>`;
     html += `<div class="rest-message"><div class="icon">&#128564;</div><p>Tego dnia odpoczywasz.</p></div>`;
@@ -790,7 +938,7 @@ function render() {
   const tr = getTrainingForDate(today);
   if (tr) {
     document.getElementById('status-badge').innerHTML = `<span class="status-badge status-training">Dzien treningowy</span>`;
-    document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today) + `<div class="action-row"><button class="action-btn action-done" onclick="markDone()">&#10003; Zrobione</button><button class="action-btn action-skip" onclick="skipTraining()">&#10005; Pomijam</button></div>`;
+    document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today, true) + `<div class="action-row"><button class="action-btn action-done" onclick="markDone()">&#10003; Zrobione</button><button class="action-btn action-skip" onclick="skipTraining()">&#10005; Pomijam</button></div>`;
   } else {
     document.getElementById('status-badge').innerHTML = `<span class="status-badge status-rest">Dzien odpoczynku</span>`;
     document.getElementById('today-content').innerHTML = `<div class="rest-message"><div class="icon">&#128564;</div><p>Dzisiaj odpoczywasz.<br>Regeneracja jest wazna!</p></div>`;
@@ -812,11 +960,11 @@ function render() {
   let allHtml = '';
   TRAININGS.forEach(t => {
     allHtml += `<div class="training-card"><h3>${t.name}</h3><div class="muscles-tag">${t.muscles}</div><ul class="exercise-list">`;
-    t.exercises.forEach((ex, i) => { allHtml += renderExerciseItem(ex, i, ''); });
+    t.exercises.forEach((ex, i) => { allHtml += renderExerciseItem(ex, i, '', false); });
     allHtml += `</ul></div>`;
   });
   allHtml += `<div class="abs-card"><h3>Brzuch</h3><div class="subtitle">2x w tygodniu &middot; 2+2 cwiczenia &middot; rotacja co tydzien</div><ul class="exercise-list">`;
-  ABS_EXERCISES.forEach((ex, i) => { allHtml += renderExerciseItem(ex, i, 'abs-exercise-num'); });
+  ABS_EXERCISES.forEach((ex, i) => { allHtml += renderExerciseItem(ex, i, 'abs-exercise-num', false); });
   allHtml += `</ul></div>`;
   document.getElementById('all-trainings').innerHTML = allHtml;
   document.getElementById('start-date-input').value = getStartDate().toISOString().split('T')[0];
@@ -846,6 +994,71 @@ function skipTraining() {
   const cur = getStartTrainingOffset();
   setStartTrainingOffset(((cur - 1) % 4 + 4) % 4);
   showToast('skip', '&#9193;', 'Trening przesuniety');
+}
+
+// ====== TIMER ======
+let timerSeconds = 90, timerRemaining = 90, timerInterval = null, timerRunning = false;
+
+function formatTimer(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m}:${String(sec).padStart(2, '0')}`;
+}
+function setTimer(s) {
+  timerSeconds = s;
+  timerRemaining = s;
+  timerRunning = false;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  document.getElementById('timer-display').textContent = formatTimer(s);
+  document.getElementById('timer-done-msg').style.display = 'none';
+  document.getElementById('timer-start-btn').textContent = 'START';
+  document.querySelectorAll('.timer-preset').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.timer-preset[onclick="setTimer(${s})"]`)?.classList.add('active');
+  document.getElementById('timer-fab').classList.remove('running');
+}
+function openTimer() {
+  document.getElementById('timer-overlay').classList.add('open');
+}
+function closeTimer() {
+  document.getElementById('timer-overlay').classList.remove('open');
+}
+function startTimer() {
+  if (timerRunning) {
+    // pause
+    clearInterval(timerInterval); timerInterval = null;
+    timerRunning = false;
+    document.getElementById('timer-start-btn').textContent = 'WZNOW';
+    document.getElementById('timer-fab').classList.remove('running');
+    return;
+  }
+  if (timerRemaining <= 0) { setTimer(timerSeconds); }
+  timerRunning = true;
+  document.getElementById('timer-start-btn').textContent = 'PAUZA';
+  document.getElementById('timer-done-msg').style.display = 'none';
+  document.getElementById('timer-fab').classList.add('running');
+  timerInterval = setInterval(() => {
+    timerRemaining--;
+    document.getElementById('timer-display').textContent = formatTimer(Math.max(0, timerRemaining));
+    document.getElementById('timer-fab').innerHTML = formatTimer(Math.max(0, timerRemaining));
+    if (timerRemaining <= 0) {
+      clearInterval(timerInterval); timerInterval = null;
+      timerRunning = false;
+      document.getElementById('timer-done-msg').style.display = 'block';
+      document.getElementById('timer-start-btn').textContent = 'RESTART';
+      document.getElementById('timer-fab').innerHTML = '&#9201;';
+      document.getElementById('timer-fab').classList.remove('running');
+      if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 300]);
+      try {
+        const ac = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.frequency.value = 880;
+        gain.gain.value = 0.3;
+        osc.start(); osc.stop(ac.currentTime + 0.5);
+      } catch(e) {}
+    }
+  }, 1000);
 }
 
 function calibrate(idx) {
