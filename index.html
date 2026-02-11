@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#050508">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Moj Trening</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -660,7 +662,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '8';
+const APP_VERSION = '9';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
@@ -854,6 +856,50 @@ function calibrate(idx) {
 }
 
 render();
+
+// ====== PWA & NOTIFICATIONS ======
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function sendTrainingNotification(tr) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const title = 'Czas na trening! 💪';
+  const body = `${tr.training.name} — ${tr.training.muscles}${tr.hasAbs ? ' + Brzuch' : ''}`;
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag: 'training-today' });
+    });
+  } else {
+    new Notification(title, { body, icon: 'icon-192.png', tag: 'training-today' });
+  }
+}
+
+// Show notification on app open if training day and not already shown today
+(function() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayStr = toDateStr(today);
+  const lastNotif = localStorage.getItem('lastNotifDate');
+  const tr = getTrainingForDate(today);
+  if (tr && lastNotif !== todayStr) {
+    localStorage.setItem('lastNotifDate', todayStr);
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        setTimeout(() => sendTrainingNotification(tr), 1000);
+      } else if (Notification.permission === 'default') {
+        Notification.requestPermission().then(p => {
+          if (p === 'granted') sendTrainingNotification(tr);
+        });
+      }
+    }
+  }
+})();
 </script>
 </body>
 </html>
