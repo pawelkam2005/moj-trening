@@ -179,6 +179,21 @@ body {
 .weight-input:focus { border-color: var(--green); }
 .weight-input::placeholder { color: var(--text-dim); font-weight: 400; }
 .weight-label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
+.weight-ok {
+  padding: 5px 12px;
+  background: var(--green-dim);
+  border: 1px solid rgba(0,210,160,0.2);
+  border-radius: 8px;
+  color: var(--green);
+  font-size: 12px; font-weight: 800;
+  font-family: inherit; cursor: pointer;
+  transition: all 0.2s;
+}
+.weight-ok:active { transform: scale(0.92); }
+.weight-ok.saved {
+  background: rgba(0,210,160,0.25);
+  border-color: var(--green);
+}
 .weight-last { font-size: 10px; color: var(--purple); font-weight: 600; }
 
 /* ====== TIMER ====== */
@@ -1027,8 +1042,9 @@ function renderExerciseItem(ex, i, numClass, showWeight) {
   let weightHtml = '';
   if (showWeight) {
     const saved = getSavedWeight(ex.name);
+    const esc = ex.name.replace(/'/g,"\\'");
     const lastW = saved ? `<span class="weight-last">ostatnio: ${saved} kg</span>` : '';
-    weightHtml = `<div class="weight-row"><span class="weight-label">Ciezar:</span><input type="number" step="0.5" class="weight-input" placeholder="kg" value="${saved}" onchange="saveWeight('${ex.name.replace(/'/g,"\\'")}', this.value)">${lastW}</div>`;
+    weightHtml = `<div class="weight-row"><span class="weight-label">Ciezar:</span><input type="number" step="0.5" class="weight-input" id="wi_${i}" placeholder="kg" value="${saved}"><button class="weight-ok" onclick="saveWeight('${esc}', document.getElementById('wi_${i}').value); this.classList.add('saved'); this.textContent='\\u2713'; setTimeout(()=>{this.classList.remove('saved');this.textContent='OK'},1200)">OK</button>${lastW}</div>`;
   }
   return `<li class="exercise-item"><div class="exercise-num ${numClass}">${i+1}</div><div class="exercise-info"><div class="exercise-name">${ex.name}</div><div class="exercise-meta">${meta}</div>${weightHtml}${videoHtml}</div></li>`;
 }
