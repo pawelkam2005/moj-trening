@@ -91,52 +91,69 @@ body {
   color: var(--text-dim); border: 1px solid var(--card-border);
 }
 
-/* ====== SKIP BUTTON ====== */
-.skip-btn {
+/* ====== ACTION BUTTONS ====== */
+.action-row {
+  display: flex; gap: 10px;
+  margin: 16px 0 0;
+}
+.action-btn {
+  flex: 1;
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%;
-  margin: 12px 0 0;
-  padding: 14px;
-  background: rgba(255,159,67,0.08);
-  border: 1px solid rgba(255,159,67,0.2);
+  padding: 16px 10px;
   border-radius: var(--radius);
-  color: var(--orange);
-  font-size: 13px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
+  border: none;
 }
-.skip-btn:active {
-  background: rgba(255,159,67,0.15);
-  transform: scale(0.98);
+.action-btn:active { transform: scale(0.96); }
+.action-done {
+  background: linear-gradient(135deg, rgba(0,210,160,0.15), rgba(0,180,200,0.1));
+  border: 1px solid rgba(0,210,160,0.25);
+  color: var(--green);
 }
-.skip-btn .icon { font-size: 16px; }
-.skip-confirm {
+.action-done:active { background: rgba(0,210,160,0.25); }
+.action-skip {
+  background: rgba(255,159,67,0.08);
+  border: 1px solid rgba(255,159,67,0.2);
+  color: var(--orange);
+}
+.action-skip:active { background: rgba(255,159,67,0.15); }
+
+.toast {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  padding: 20px 32px;
+  border-radius: var(--radius);
+  font-size: 15px; font-weight: 700;
+  font-family: inherit;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  animation: toastPop 1.6s ease forwards;
   text-align: center;
-  padding: 20px;
-  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(20px);
 }
-.skip-confirm p {
-  font-size: 13px; color: var(--text-mid); margin-bottom: 16px; line-height: 1.5;
+.toast-done {
+  background: rgba(0,210,160,0.2);
+  border: 1px solid rgba(0,210,160,0.3);
+  color: var(--green);
+  box-shadow: 0 0 40px rgba(0,210,160,0.15);
 }
-.skip-confirm-btns {
-  display: flex; gap: 10px; justify-content: center;
-}
-.skip-yes {
-  padding: 12px 28px;
-  background: linear-gradient(135deg, rgba(255,159,67,0.2), rgba(255,120,40,0.15));
+.toast-skip {
+  background: rgba(255,159,67,0.2);
   border: 1px solid rgba(255,159,67,0.3);
-  border-radius: var(--radius-sm);
-  color: var(--orange); font-size: 13px; font-weight: 700;
-  font-family: inherit; cursor: pointer;
+  color: var(--orange);
+  box-shadow: 0 0 40px rgba(255,159,67,0.15);
 }
-.skip-no {
-  padding: 12px 28px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-sm);
-  color: var(--text-mid); font-size: 13px; font-weight: 600;
-  font-family: inherit; cursor: pointer;
+.toast-icon { font-size: 36px; display: block; margin-bottom: 8px; }
+@keyframes toastPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  75% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
 }
 
 /* ====== QUOTE ====== */
@@ -643,7 +660,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '7';
+const APP_VERSION = '8';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
@@ -771,7 +788,7 @@ function render() {
   const tr = getTrainingForDate(today);
   if (tr) {
     document.getElementById('status-badge').innerHTML = `<span class="status-badge status-training">Dzien treningowy</span>`;
-    document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today) + `<button class="skip-btn" onclick="showSkipConfirm()"><span class="icon">&#9193;</span> Pominalem trening - przesun</button><div id="skip-confirm-area"></div>`;
+    document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today) + `<div class="action-row"><button class="action-btn action-done" onclick="markDone()">&#10003; Zrobione</button><button class="action-btn action-skip" onclick="skipTraining()">&#10005; Pomijam</button></div>`;
   } else {
     document.getElementById('status-badge').innerHTML = `<span class="status-badge status-rest">Dzien odpoczynku</span>`;
     document.getElementById('today-content').innerHTML = `<div class="rest-message"><div class="icon">&#128564;</div><p>Dzisiaj odpoczywasz.<br>Regeneracja jest wazna!</p></div>`;
@@ -813,17 +830,20 @@ function showPage(name) {
 
 document.getElementById('start-date-input').addEventListener('change', function() { setStartDate(this.value); });
 
-function showSkipConfirm() {
-  document.getElementById('skip-confirm-area').innerHTML = `<div class="skip-confirm"><p>Pomijasz dzisiejszy trening?<br>Wszystkie treningi przesuna sie o jeden do przodu.</p><div class="skip-confirm-btns"><button class="skip-yes" onclick="skipTraining()">Tak, przesun</button><button class="skip-no" onclick="hideSkipConfirm()">Anuluj</button></div></div>`;
-  document.querySelector('.skip-btn').style.display = 'none';
+function showToast(type, icon, text) {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<span class="toast-icon">${icon}</span>${text}`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1700);
 }
-function hideSkipConfirm() {
-  document.getElementById('skip-confirm-area').innerHTML = '';
-  document.querySelector('.skip-btn').style.display = 'flex';
+function markDone() {
+  showToast('done', '&#128170;', 'Dobra robota!');
 }
 function skipTraining() {
   const cur = getStartTrainingOffset();
   setStartTrainingOffset(((cur - 1) % 4 + 4) % 4);
+  showToast('skip', '&#9193;', 'Trening przesuniety');
 }
 
 function calibrate(idx) {
