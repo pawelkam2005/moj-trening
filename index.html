@@ -91,6 +91,54 @@ body {
   color: var(--text-dim); border: 1px solid var(--card-border);
 }
 
+/* ====== SKIP BUTTON ====== */
+.skip-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  margin: 12px 0 0;
+  padding: 14px;
+  background: rgba(255,159,67,0.08);
+  border: 1px solid rgba(255,159,67,0.2);
+  border-radius: var(--radius);
+  color: var(--orange);
+  font-size: 13px; font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.skip-btn:active {
+  background: rgba(255,159,67,0.15);
+  transform: scale(0.98);
+}
+.skip-btn .icon { font-size: 16px; }
+.skip-confirm {
+  text-align: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+.skip-confirm p {
+  font-size: 13px; color: var(--text-mid); margin-bottom: 16px; line-height: 1.5;
+}
+.skip-confirm-btns {
+  display: flex; gap: 10px; justify-content: center;
+}
+.skip-yes {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, rgba(255,159,67,0.2), rgba(255,120,40,0.15));
+  border: 1px solid rgba(255,159,67,0.3);
+  border-radius: var(--radius-sm);
+  color: var(--orange); font-size: 13px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+}
+.skip-no {
+  padding: 12px 28px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-mid); font-size: 13px; font-weight: 600;
+  font-family: inherit; cursor: pointer;
+}
+
 /* ====== QUOTE ====== */
 .quote-box {
   margin: 16px auto 0;
@@ -595,7 +643,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '6';
+const APP_VERSION = '7';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
@@ -723,7 +771,7 @@ function render() {
   const tr = getTrainingForDate(today);
   if (tr) {
     document.getElementById('status-badge').innerHTML = `<span class="status-badge status-training">Dzien treningowy</span>`;
-    document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today);
+    document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today) + `<button class="skip-btn" onclick="showSkipConfirm()"><span class="icon">&#9193;</span> Pominalem trening - przesun</button><div id="skip-confirm-area"></div>`;
   } else {
     document.getElementById('status-badge').innerHTML = `<span class="status-badge status-rest">Dzien odpoczynku</span>`;
     document.getElementById('today-content').innerHTML = `<div class="rest-message"><div class="icon">&#128564;</div><p>Dzisiaj odpoczywasz.<br>Regeneracja jest wazna!</p></div>`;
@@ -764,6 +812,19 @@ function showPage(name) {
 }
 
 document.getElementById('start-date-input').addEventListener('change', function() { setStartDate(this.value); });
+
+function showSkipConfirm() {
+  document.getElementById('skip-confirm-area').innerHTML = `<div class="skip-confirm"><p>Pomijasz dzisiejszy trening?<br>Wszystkie treningi przesuna sie o jeden do przodu.</p><div class="skip-confirm-btns"><button class="skip-yes" onclick="skipTraining()">Tak, przesun</button><button class="skip-no" onclick="hideSkipConfirm()">Anuluj</button></div></div>`;
+  document.querySelector('.skip-btn').style.display = 'none';
+}
+function hideSkipConfirm() {
+  document.getElementById('skip-confirm-area').innerHTML = '';
+  document.querySelector('.skip-btn').style.display = 'flex';
+}
+function skipTraining() {
+  const cur = getStartTrainingOffset();
+  setStartTrainingOffset(((cur - 1) % 4 + 4) % 4);
+}
 
 function calibrate(idx) {
   const today = new Date(); today.setHours(0,0,0,0);
