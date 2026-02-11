@@ -278,6 +278,119 @@ body {
   margin-top: 16px;
 }
 
+/* ====== STATS PAGE ====== */
+.stats-section {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 18px; margin: 14px 0;
+  position: relative; overflow: hidden;
+}
+.stats-section::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green-glow), transparent);
+}
+.stats-section h3 {
+  font-size: 14px; font-weight: 800; color: var(--green);
+  margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px;
+}
+.stats-section.body-section h3 { color: var(--purple); }
+.stats-section.body-section::before {
+  background: linear-gradient(90deg, transparent, var(--purple-glow), transparent);
+}
+.week-stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.week-stat {
+  background: rgba(255,255,255,0.03);
+  border-radius: var(--radius-sm);
+  padding: 14px; text-align: center;
+}
+.week-stat-val {
+  font-size: 28px; font-weight: 900; color: #fff;
+}
+.week-stat-label {
+  font-size: 11px; color: var(--text-dim); font-weight: 600;
+  margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.body-weight-input-row {
+  display: flex; gap: 10px; margin-bottom: 16px;
+}
+.body-weight-input {
+  flex: 1;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm);
+  color: var(--text); font-size: 15px; font-weight: 600;
+  font-family: inherit; outline: none;
+}
+.body-weight-input:focus { border-color: var(--purple); }
+.body-weight-input::placeholder { color: var(--text-dim); }
+.body-weight-save {
+  padding: 12px 20px;
+  background: var(--purple-glow);
+  border: 1px solid rgba(124,92,252,0.25);
+  border-radius: var(--radius-sm);
+  color: var(--purple); font-size: 14px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+}
+.chart-container {
+  position: relative;
+  width: 100%; height: 160px;
+  margin-top: 8px;
+}
+.chart-container canvas {
+  width: 100%; height: 100%;
+}
+.chart-empty {
+  display: flex; align-items: center; justify-content: center;
+  height: 120px; color: var(--text-dim); font-size: 13px;
+}
+.body-current {
+  text-align: center; margin-bottom: 14px;
+}
+.body-current-val {
+  font-size: 36px; font-weight: 900; color: #fff;
+}
+.body-current-unit {
+  font-size: 14px; color: var(--text-dim); font-weight: 600;
+}
+.body-current-change {
+  font-size: 12px; font-weight: 700; margin-top: 4px;
+}
+.ex-progress-list { list-style: none; }
+.ex-progress-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.ex-progress-item:last-child { border-bottom: none; }
+.ex-progress-name {
+  font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px;
+}
+.ex-progress-bar-bg {
+  height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,0.04);
+  position: relative; overflow: hidden;
+}
+.ex-progress-bar {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--green), #00e6b0);
+  transition: width 0.5s ease;
+}
+.ex-progress-vals {
+  display: flex; justify-content: space-between;
+  margin-top: 4px;
+}
+.ex-progress-val {
+  font-size: 11px; color: var(--text-dim); font-weight: 600;
+}
+.ex-progress-current {
+  font-size: 11px; color: var(--green); font-weight: 700;
+}
+
 /* ====== QUOTE ====== */
 .quote-box {
   margin: 16px auto 0;
@@ -643,6 +756,27 @@ body {
   <div class="all-trainings" id="all-trainings"></div>
 </div>
 
+<div id="page-stats" class="page">
+  <div class="page-title">Statystyki</div>
+  <div class="stats-section">
+    <h3>Ten tydzien</h3>
+    <div class="week-stats-grid" id="week-stats"></div>
+  </div>
+  <div class="stats-section body-section">
+    <h3>Waga ciala</h3>
+    <div class="body-current" id="body-current"></div>
+    <div class="body-weight-input-row">
+      <input type="number" step="0.1" class="body-weight-input" id="body-weight-input" placeholder="Wpisz wage (kg)">
+      <button class="body-weight-save" onclick="saveBodyWeight()">Zapisz</button>
+    </div>
+    <div class="chart-container" id="body-chart-container"></div>
+  </div>
+  <div class="stats-section">
+    <h3>Progresja ciezarow</h3>
+    <div id="ex-progress-list"></div>
+  </div>
+</div>
+
 <div id="page-settings" class="page">
   <div class="page-title">Ustawienia</div>
   <div class="settings-section">
@@ -692,6 +826,9 @@ body {
   </button>
   <button class="tab" onclick="showPage('all')">
     <span class="tab-icon">&#128170;</span>Treningi
+  </button>
+  <button class="tab" onclick="showPage('stats')">
+    <span class="tab-icon">&#128200;</span>Statystyki
   </button>
   <button class="tab" onclick="showPage('settings')">
     <span class="tab-icon">&#9881;</span>Ustawienia
@@ -800,7 +937,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '10';
+const APP_VERSION = '11';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
@@ -848,8 +985,36 @@ function toDateStr(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padS
 const YT_SVG = `<svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2 31.4 31.4 0 000 12a31.4 31.4 0 00.5 5.8 3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1A31.4 31.4 0 0024 12a31.4 31.4 0 00-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>`;
 
 function getWeightKey(exName) { return 'w_' + exName.replace(/\s+/g, '_').toLowerCase(); }
-function getSavedWeight(exName) { return localStorage.getItem(getWeightKey(exName)) || ''; }
-function saveWeight(exName, val) { if (val) localStorage.setItem(getWeightKey(exName), val); else localStorage.removeItem(getWeightKey(exName)); }
+function getWeightHistory(exName) {
+  try { return JSON.parse(localStorage.getItem(getWeightKey(exName))) || []; } catch { return []; }
+}
+function getSavedWeight(exName) {
+  const h = getWeightHistory(exName);
+  return h.length > 0 ? h[h.length - 1].kg : '';
+}
+function saveWeight(exName, val) {
+  if (!val) return;
+  const h = getWeightHistory(exName);
+  const today = toDateStr(new Date());
+  const last = h.length > 0 ? h[h.length - 1] : null;
+  if (last && last.date === today) { last.kg = val; }
+  else { h.push({ date: today, kg: val }); }
+  if (h.length > 20) h.splice(0, h.length - 20);
+  localStorage.setItem(getWeightKey(exName), JSON.stringify(h));
+}
+// Migrate old format (single value) to new format (array)
+function migrateWeights() {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('w_')) {
+      const val = localStorage.getItem(key);
+      if (val && !val.startsWith('[')) {
+        localStorage.setItem(key, JSON.stringify([{ date: toDateStr(new Date()), kg: val }]));
+      }
+    }
+  }
+}
+migrateWeights();
 
 function renderExerciseItem(ex, i, numClass, showWeight) {
   let meta = `<span class="exercise-sets">${ex.sets}s &times; ${ex.reps}</span>`;
@@ -968,6 +1133,7 @@ function render() {
   allHtml += `</ul></div>`;
   document.getElementById('all-trainings').innerHTML = allHtml;
   document.getElementById('start-date-input').value = getStartDate().toISOString().split('T')[0];
+  renderStats();
 }
 
 function showPage(name) {
@@ -1059,6 +1225,191 @@ function startTimer() {
       } catch(e) {}
     }
   }, 1000);
+}
+
+// ====== BODY WEIGHT ======
+function getBodyWeightHistory() {
+  try { return JSON.parse(localStorage.getItem('bodyWeight')) || []; } catch { return []; }
+}
+function saveBodyWeight() {
+  const input = document.getElementById('body-weight-input');
+  const val = input.value;
+  if (!val) return;
+  const h = getBodyWeightHistory();
+  const today = toDateStr(new Date());
+  const last = h.length > 0 ? h[h.length - 1] : null;
+  if (last && last.date === today) { last.kg = val; }
+  else { h.push({ date: today, kg: val }); }
+  if (h.length > 60) h.splice(0, h.length - 60);
+  localStorage.setItem('bodyWeight', JSON.stringify(h));
+  input.value = '';
+  showToast('done', '&#9989;', 'Waga zapisana');
+  renderStats();
+}
+
+// ====== CHART DRAWING ======
+function drawChart(canvasId, data, color, unit) {
+  const container = document.getElementById(canvasId);
+  if (!container) return;
+  if (data.length < 2) {
+    container.innerHTML = '<div class="chart-empty">Za malo danych na wykres (min. 2 wpisy)</div>';
+    return;
+  }
+  const canvas = document.createElement('canvas');
+  container.innerHTML = '';
+  container.appendChild(canvas);
+  const dpr = window.devicePixelRatio || 1;
+  const w = container.offsetWidth;
+  const h = 160;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const vals = data.map(d => parseFloat(d.kg));
+  const min = Math.min(...vals) * 0.95;
+  const max = Math.max(...vals) * 1.05;
+  const range = max - min || 1;
+  const padL = 40, padR = 10, padT = 15, padB = 28;
+  const chartW = w - padL - padR;
+  const chartH = h - padT - padB;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (chartH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+    const v = max - (range / 4) * i;
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(v.toFixed(1), padL - 6, y + 3);
+  }
+
+  // Line
+  ctx.beginPath();
+  const points = vals.map((v, i) => ({
+    x: padL + (i / (vals.length - 1)) * chartW,
+    y: padT + chartH - ((v - min) / range) * chartH
+  }));
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // Fill under
+  ctx.lineTo(points[points.length-1].x, padT + chartH);
+  ctx.lineTo(points[0].x, padT + chartH);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+  grad.addColorStop(0, color.replace(')', ',0.2)').replace('rgb', 'rgba'));
+  grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Dots
+  points.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+  });
+
+  // X labels (first and last date)
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.font = '10px Inter, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(data[0].date.slice(5), padL, h - 4);
+  ctx.textAlign = 'right';
+  ctx.fillText(data[data.length-1].date.slice(5), w - padR, h - 4);
+}
+
+// ====== STATS RENDERING ======
+function renderStats() {
+  // Week summary
+  const today = new Date(); today.setHours(0,0,0,0);
+  const monday = getMondayOfWeek(today);
+  let trainingsThisWeek = 0, totalSets = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday); d.setDate(d.getDate() + i);
+    if (d > today) break;
+    const tr = getTrainingForDate(d);
+    if (tr) {
+      trainingsThisWeek++;
+      totalSets += tr.training.exercises.reduce((s, ex) => s + ex.sets, 0);
+      if (tr.hasAbs) {
+        const abs = getAbsForDate(d);
+        totalSets += abs.reduce((s, ex) => s + ex.sets, 0);
+      }
+    }
+  }
+  // Count remaining this week
+  let remainingThisWeek = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday); d.setDate(d.getDate() + i);
+    if (d <= today) continue;
+    if (getTrainingForDate(d)) remainingThisWeek++;
+  }
+
+  document.getElementById('week-stats').innerHTML = `
+    <div class="week-stat"><div class="week-stat-val">${trainingsThisWeek}</div><div class="week-stat-label">Treningi</div></div>
+    <div class="week-stat"><div class="week-stat-val">${remainingThisWeek}</div><div class="week-stat-label">Pozostalo</div></div>
+    <div class="week-stat"><div class="week-stat-val">${totalSets}</div><div class="week-stat-label">Serie</div></div>
+    <div class="week-stat"><div class="week-stat-val">${WEEK_TRAINING_DAYS[getCycleWeek(today)].length}</div><div class="week-stat-label">Plan / tydz</div></div>`;
+
+  // Body weight
+  const bw = getBodyWeightHistory();
+  let bodyHtml = '';
+  if (bw.length > 0) {
+    const current = bw[bw.length - 1];
+    let changeHtml = '';
+    if (bw.length >= 2) {
+      const diff = (parseFloat(current.kg) - parseFloat(bw[0].kg)).toFixed(1);
+      const sign = diff > 0 ? '+' : '';
+      const color = diff > 0 ? 'var(--orange)' : diff < 0 ? 'var(--green)' : 'var(--text-dim)';
+      changeHtml = `<div class="body-current-change" style="color:${color}">${sign}${diff} kg od pierwszego pomiaru</div>`;
+    }
+    bodyHtml = `<div class="body-current-val">${current.kg}</div><div class="body-current-unit">kg &middot; ${current.date.slice(5).replace('-','.')}</div>${changeHtml}`;
+  } else {
+    bodyHtml = '<div style="color:var(--text-dim);font-size:13px">Brak pomiarow</div>';
+  }
+  document.getElementById('body-current').innerHTML = bodyHtml;
+  drawChart('body-chart-container', bw, 'rgb(124,92,252)', 'kg');
+
+  // Exercise progression
+  let allExercises = [];
+  TRAININGS.forEach(t => t.exercises.forEach(ex => allExercises.push(ex)));
+  let progHtml = '';
+  allExercises.forEach(ex => {
+    const h = getWeightHistory(ex.name);
+    if (h.length === 0) return;
+    const first = parseFloat(h[0].kg);
+    const last = parseFloat(h[h.length - 1].kg);
+    const maxW = Math.max(...h.map(e => parseFloat(e.kg)));
+    const pct = maxW > 0 ? (last / maxW * 100) : 0;
+    const diff = h.length >= 2 ? (last - first).toFixed(1) : null;
+    let diffHtml = '';
+    if (diff !== null) {
+      const sign = diff > 0 ? '+' : '';
+      const color = diff > 0 ? 'var(--green)' : diff < 0 ? 'var(--red)' : 'var(--text-dim)';
+      diffHtml = `<span class="ex-progress-current" style="color:${color}">${sign}${diff} kg</span>`;
+    }
+    progHtml += `<div class="ex-progress-item">
+      <div class="ex-progress-name">${ex.name}</div>
+      <div class="ex-progress-bar-bg"><div class="ex-progress-bar" style="width:${pct}%"></div></div>
+      <div class="ex-progress-vals"><span class="ex-progress-val">${last} kg &middot; ${h.length} wpisow</span>${diffHtml}</div>
+    </div>`;
+  });
+  document.getElementById('ex-progress-list').innerHTML = progHtml || '<div class="chart-empty">Zapisz ciezary w treningu zeby zobaczyc progresje</div>';
 }
 
 function calibrate(idx) {
