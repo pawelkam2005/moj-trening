@@ -63,21 +63,35 @@ body::before {
 
 /* ====== HEADER ====== */
 .header {
-  text-align: left;
-  padding: 28px 4px 14px;
+  text-align: center;
+  padding: 20px 4px 14px;
   position: relative;
   z-index: 1;
 }
+.app-logo {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-bottom: 16px;
+}
+.app-logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--green), #00c898);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,230,176,0.2);
+}
+.app-logo-icon svg { width: 20px; height: 20px; stroke: #08080c; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.app-logo-text {
+  font-size: 18px; font-weight: 900; color: #fff;
+  letter-spacing: -0.5px;
+}
 .today-date {
   font-size: 10px; color: var(--text-dim);
-  text-transform: uppercase; letter-spacing: 4px;
-  font-weight: 700; margin-top: 10px;
+  text-transform: uppercase; letter-spacing: 3px;
+  font-weight: 700;
 }
 .today-day {
-  font-size: 28px; font-weight: 900; margin: 2px 0 10px;
+  font-size: 26px; font-weight: 900; margin: 4px 0 8px;
   color: #fff;
-  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 /* ====== HERO CARD ====== */
 .hero-card {
@@ -516,39 +530,6 @@ body::before {
   font-size: 11px; color: var(--green); font-weight: 700;
 }
 
-/* ====== QUOTE ====== */
-.quote-box {
-  margin: 0 0 16px;
-  padding: 14px 20px 14px 46px;
-  background: linear-gradient(135deg, rgba(139,108,255,0.06), rgba(0,230,176,0.04));
-  border: 1px solid rgba(139,108,255,0.1);
-  border-radius: var(--radius);
-  position: relative;
-}
-.quote-text {
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.8);
-  line-height: 1.6;
-  font-style: italic;
-}
-.quote-author {
-  font-size: 10px;
-  color: var(--purple);
-  font-weight: 700;
-  margin-top: 8px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
-.quote-icon {
-  position: absolute;
-  top: 8px; left: 16px;
-  font-size: 28px; font-weight: 900;
-  color: var(--purple);
-  opacity: 0.25;
-  font-family: Georgia, serif;
-}
-
 /* ====== CARDS ====== */
 .training-card {
   background: var(--card);
@@ -843,19 +824,21 @@ body::before {
   background: var(--card);
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
-  padding: 20px; margin-bottom: 10px;
+  padding: 22px; margin-bottom: 12px;
 }
-.settings-section h3 { font-size: 13px; margin-bottom: 12px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
-.settings-section label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
+.settings-section h3 { font-size: 14px; margin-bottom: 14px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
+.settings-section label { display: block; font-size: 12px; color: var(--text-mid); margin-bottom: 10px; font-weight: 500; line-height: 1.5; }
 .settings-section input[type="date"] {
-  width: 100%; padding: 13px 16px;
-  background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.05);
+  width: 100%; padding: 14px 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-sm); color: var(--text);
   font-size: 15px; font-family: inherit; outline: none;
   transition: border-color 0.2s;
+  -webkit-appearance: none; appearance: none;
+  color-scheme: dark;
 }
-.settings-section input[type="date"]:focus { border-color: var(--green); }
-.settings-section p { font-size: 11px; color: var(--text-dim); margin-top: 10px; line-height: 1.5; }
+.settings-section input[type="date"]:focus { border-color: var(--green); background: rgba(0,230,176,0.03); }
+.settings-section p { font-size: 11px; color: var(--text-dim); margin-top: 12px; line-height: 1.6; }
 .calibrate-grid {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 8px; margin-top: 12px;
@@ -875,18 +858,20 @@ body::before {
   transform: scale(0.93);
   box-shadow: 0 0 24px rgba(0,230,176,0.25);
 }
-.all-trainings .training-card { margin-bottom: 10px; }
 </style>
 </head>
 <body>
 
 <div id="page-home" class="page active">
   <div class="header">
+    <div class="app-logo">
+      <div class="app-logo-icon"><svg viewBox="0 0 24 24"><path d="M6.5 6.5h11M4 12h2.5m11 0H20M6.5 12a2 2 0 01-2-2V8.5a2 2 0 012-2h0a2 2 0 012 2V10a2 2 0 01-2 2zm11 0a2 2 0 01-2-2V8.5a2 2 0 012-2h0a2 2 0 012 2V10a2 2 0 01-2 2zM6.5 17.5h11M4 12h2.5m11 0H20M6.5 12a2 2 0 00-2 2v1.5a2 2 0 002 2h0a2 2 0 002-2V14a2 2 0 00-2-2zm11 0a2 2 0 00-2 2v1.5a2 2 0 002 2h0a2 2 0 002-2V14a2 2 0 00-2-2z"/></svg></div>
+      <span class="app-logo-text">Moj Trening</span>
+    </div>
     <div class="today-day" id="today-day"></div>
     <div class="today-date" id="today-date"></div>
   </div>
   <div id="hero-card-area"></div>
-  <div class="quote-box" id="quote-box"></div>
   <div id="today-content"></div>
   <div class="month-calendar">
     <div class="month-header">
@@ -904,11 +889,6 @@ body::before {
     <div id="next-list"></div>
   </div>
   <div class="cycle-info" id="cycle-info"></div>
-</div>
-
-<div id="page-all" class="page">
-  <div class="page-title">Treningi</div>
-  <div class="all-trainings" id="all-trainings"></div>
 </div>
 
 <div id="page-stats" class="page">
@@ -977,10 +957,7 @@ body::before {
 
 <div class="tab-bar">
   <button class="tab active" onclick="showPage('home')">
-    <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg></span>Dzisiaj
-  </button>
-  <button class="tab" onclick="showPage('all')">
-    <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.5" stroke-width="1.5"/></svg></span>Treningi
+    <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg></span>Plan
   </button>
   <button class="tab" onclick="showPage('stats')">
     <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M16 4v16M12 8v12M8 12v8M4 16v4M20 2v18"/></svg></span>Statystyki
@@ -991,40 +968,6 @@ body::before {
 </div>
 
 <script>
-const QUOTES = [
-  {t:"Nie chodzi o to, zeby byc najlepszym. Chodzi o to, zeby byc lepszym niz wczoraj.", a:"Nieznany"},
-  {t:"Bol jest tymczasowy. Rezygnacja jest wieczna.", a:"Lance Armstrong"},
-  {t:"Twoje cialo moze zniesc prawie wszystko. To umysl musisz przekonac.", a:"Nieznany"},
-  {t:"Sukces to suma malych wysilkow powtarzanych dzien po dniu.", a:"Robert Collier"},
-  {t:"Nie licz dni. Spraw, zeby dni sie liczyly.", a:"Muhammad Ali"},
-  {t:"Silownia nie zmienia tylko ciala. Zmienia umysl, nastawienie i nastroj.", a:"Nieznany"},
-  {t:"Jedyny zly trening to ten, ktory sie nie odbyl.", a:"Nieznany"},
-  {t:"Dyscyplina to most miedzy celami a osiagnieciami.", a:"Jim Rohn"},
-  {t:"Nie zatrzymuj sie, kiedy jestes zmeczony. Zatrzymaj sie, kiedy skonczysz.", a:"Nieznany"},
-  {t:"Kazdy mistrz byl kiedys uczniem, ktory nie chcial sie poddac.", a:"Nieznany"},
-  {t:"Ciezka praca bije talent, kiedy talent nie pracuje ciezko.", a:"Tim Notke"},
-  {t:"Twoja jedyna granica to Ty sam.", a:"Nieznany"},
-  {t:"Nie musisz byc ekstremalny, po prostu badz konsekwentny.", a:"Nieznany"},
-  {t:"Marzenia nie dzialaja, dopoki Ty nie zaczniasz dzialac.", a:"John C. Maxwell"},
-  {t:"Najlepszy czas na trening byl wczoraj. Drugi najlepszy czas to teraz.", a:"Nieznany"},
-  {t:"Wyniki przychodza z czasem, nie z dnia na dzien. Pracuj dalej.", a:"Nieznany"},
-  {t:"Sila nie pochodzi z wygrywania. Twoje zmagania buduja sile.", a:"Arnold Schwarzenegger"},
-  {t:"Codziennie rób cos, co przybliza Cie do celu.", a:"Nieznany"},
-  {t:"Motywacja sprawia, ze zaczynasz. Nawyk sprawia, ze kontynuujesz.", a:"Jim Ryun"},
-  {t:"Im ciezej pracujesz, tym lepszym sie stajesz. Bez skrotow.", a:"Nieznany"},
-  {t:"Nie oczekuj rezultatow, jesli nie jestes gotowy na wysilek.", a:"Nieznany"},
-  {t:"To, co dzisiaj boli, jutro Cie wzmocni.", a:"Nieznany"},
-  {t:"Bądz silniejszy niz twoje wymowki.", a:"Nieznany"},
-  {t:"Jedna godzina treningu to tylko 4% Twojego dnia. Nie ma wymowek.", a:"Nieznany"},
-  {t:"Zrob to teraz. Czasem pozniej znaczy nigdy.", a:"Nieznany"},
-  {t:"Nie porownuj sie z innymi. Porownuj sie z soba sprzed miesiaca.", a:"Nieznany"},
-  {t:"Silownia jest jak zycie - dostajesz tyle, ile wlozysz.", a:"Nieznany"},
-  {t:"Nie czekaj na motywacje. Dzialaj, a motywacja przyjdzie.", a:"Nieznany"},
-  {t:"Kazdego dnia masz wybor: poddac sie albo walczyc dalej.", a:"Nieznany"},
-  {t:"Pot to tluszcz, ktory plache.", a:"Nieznany"},
-  {t:"Progres, nie perfekcja.", a:"Nieznany"},
-];
-
 const TRAININGS = [
   {
     name: "Trening 1",
@@ -1092,10 +1035,8 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '18';
+const APP_VERSION = '19';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
-  localStorage.removeItem('trainingStartDate');
-  localStorage.removeItem('trainingOffset');
   localStorage.setItem('appVersion', APP_VERSION);
 }
 
@@ -1254,9 +1195,6 @@ function render() {
   const today = new Date(); today.setHours(0,0,0,0);
   document.getElementById('today-date').textContent = formatDate(today);
   document.getElementById('today-day').textContent = DAY_NAMES_FULL[getDayOfWeek(today)];
-  const daysSinceEpoch = Math.floor(today.getTime() / 86400000);
-  const q = QUOTES[daysSinceEpoch % QUOTES.length];
-  document.getElementById('quote-box').innerHTML = `<span class="quote-icon">"</span><div class="quote-text">${q.t}</div><div class="quote-author">— ${q.a}</div>`;
   const tr = getTrainingForDate(today);
   const cw = getCycleWeek(today);
   if (tr) {
@@ -1282,16 +1220,6 @@ function render() {
   }
   document.getElementById('next-list').innerHTML = nextHtml;
   document.getElementById('cycle-info').textContent = '';
-  let allHtml = '';
-  TRAININGS.forEach(t => {
-    allHtml += `<div class="training-card"><h3>${t.name}</h3><div class="muscles-tag">${t.muscles}</div><ul class="exercise-list">`;
-    t.exercises.forEach((ex, i) => { allHtml += renderExerciseItem(ex, i, '', false); });
-    allHtml += `</ul></div>`;
-  });
-  allHtml += `<div class="abs-card"><h3>Brzuch</h3><div class="subtitle">2x w tygodniu &middot; 2+2 cwiczenia &middot; rotacja co tydzien</div><ul class="exercise-list">`;
-  ABS_EXERCISES.forEach((ex, i) => { allHtml += renderExerciseItem(ex, i, 'abs-exercise-num', false); });
-  allHtml += `</ul></div>`;
-  document.getElementById('all-trainings').innerHTML = allHtml;
   document.getElementById('start-date-input').value = getStartDate().toISOString().split('T')[0];
   renderStats();
 }
