@@ -63,10 +63,6 @@ body::before {
   position: relative;
   z-index: 1;
 }
-.greeting {
-  font-size: 14px; color: var(--text-mid);
-  font-weight: 600; margin-bottom: 2px;
-}
 .today-date {
   font-size: 10px; color: var(--text-dim);
   text-transform: uppercase; letter-spacing: 4px;
@@ -80,26 +76,38 @@ body::before {
 }
 /* ====== HERO CARD ====== */
 .hero-card {
-  background: var(--card);
   border: 1px solid var(--card-border);
   border-radius: 22px;
   padding: 24px;
-  margin: 8px 0 20px;
+  margin: 8px 0 16px;
   position: relative;
   overflow: hidden;
+  background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=60') center/cover no-repeat;
 }
 .hero-card::before {
   content: '';
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(ellipse at 80% 20%, rgba(0,230,176,0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(8,8,12,0.88), rgba(8,8,12,0.75));
   pointer-events: none;
 }
+.hero-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at 90% 10%, rgba(0,230,176,0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-card.rest-hero {
+  background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=60');
+}
 .hero-card.rest-hero::before {
-  background: radial-gradient(ellipse at 80% 20%, rgba(139,108,255,0.05) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(8,8,12,0.9), rgba(8,8,12,0.8));
+}
+.hero-card.rest-hero::after {
+  background: radial-gradient(ellipse at 90% 10%, rgba(139,108,255,0.06) 0%, transparent 50%);
 }
 .hero-top {
   display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 16px; position: relative;
+  margin-bottom: 16px; position: relative; z-index: 1;
 }
 .hero-info { flex: 1; }
 .hero-label {
@@ -135,6 +143,7 @@ body::before {
 }
 .hero-badge-row {
   display: flex; gap: 6px; flex-wrap: wrap;
+  position: relative; z-index: 1;
 }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 5px;
@@ -156,9 +165,8 @@ body::before {
 }
 .rest-hero-content {
   text-align: center; padding: 20px 0 10px;
-  position: relative;
+  position: relative; z-index: 1;
 }
-.rest-emoji { font-size: 48px; margin-bottom: 12px; opacity: 0.7; }
 .rest-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px; }
 .rest-subtitle { font-size: 13px; color: var(--text-dim); font-weight: 500; line-height: 1.6; }
 .page-title {
@@ -549,9 +557,11 @@ body::before {
 }
 .quote-icon {
   position: absolute;
-  top: 12px; left: 16px;
-  font-size: 20px;
-  opacity: 0.35;
+  top: 8px; left: 16px;
+  font-size: 28px; font-weight: 900;
+  color: var(--purple);
+  opacity: 0.25;
+  font-family: Georgia, serif;
 }
 
 /* ====== CARDS ====== */
@@ -885,7 +895,6 @@ body::before {
 
 <div id="page-home" class="page active">
   <div class="header">
-    <div class="greeting" id="greeting"></div>
     <div class="today-day" id="today-day"></div>
     <div class="today-date" id="today-date"></div>
   </div>
@@ -1096,7 +1105,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '13';
+const APP_VERSION = '14';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
@@ -1219,7 +1228,7 @@ function openDayDetail(dateStr) {
     html += renderTrainingHtml(tr, date, sameDay(date, today));
   } else {
     html += `<span class="day-detail-badge status-rest">ODPOCZYNEK</span>`;
-    html += `<div class="rest-message"><div class="icon">&#128564;</div><p>Tego dnia odpoczywasz.</p></div>`;
+    html += `<div class="rest-message"><p>Tego dnia odpoczywasz.</p></div>`;
   }
   document.getElementById('day-detail-panel').innerHTML = html;
   document.getElementById('day-detail-overlay').classList.add('open');
@@ -1256,14 +1265,11 @@ function renderMonthCalendar() {
 
 function render() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const hour = new Date().getHours();
-  const greet = hour < 6 ? 'Dobrej nocy' : hour < 12 ? 'Dzien dobry' : hour < 18 ? 'Czesc' : 'Dobry wieczor';
-  document.getElementById('greeting').textContent = greet + ' 👋';
   document.getElementById('today-date').textContent = formatDate(today);
   document.getElementById('today-day').textContent = DAY_NAMES_FULL[getDayOfWeek(today)];
   const daysSinceEpoch = Math.floor(today.getTime() / 86400000);
   const q = QUOTES[daysSinceEpoch % QUOTES.length];
-  document.getElementById('quote-box').innerHTML = `<span class="quote-icon">&#10077;</span><div class="quote-text">${q.t}</div><div class="quote-author">— ${q.a}</div>`;
+  document.getElementById('quote-box').innerHTML = `<span class="quote-icon">"</span><div class="quote-text">${q.t}</div><div class="quote-author">— ${q.a}</div>`;
   const tr = getTrainingForDate(today);
   const cw = getCycleWeek(today);
   if (tr) {
@@ -1272,7 +1278,7 @@ function render() {
     document.getElementById('hero-card-area').innerHTML = `<div class="hero-card"><div class="hero-top"><div class="hero-info"><div class="hero-label">Dzisiejszy trening</div><div class="hero-title">${tr.training.name}</div><div class="hero-subtitle">${tr.training.muscles}</div></div><div class="hero-number">T${tr.trainingIdx+1}</div></div><div class="hero-badge-row"><span class="hero-badge hero-badge-green">${exCount} cwiczen</span><span class="hero-badge hero-badge-green">${setCount} serii</span>${tr.hasAbs ? '<span class="hero-badge hero-badge-orange">+ brzuch</span>' : ''}<span class="hero-badge hero-badge-purple">Tydzien ${cw+1}</span></div></div>`;
     document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today, true) + `<div class="action-row"><button class="action-btn action-done" onclick="markDone()">&#10003; Zrobione</button><button class="action-btn action-skip" onclick="skipTraining()">&#10005; Pomijam</button></div>`;
   } else {
-    document.getElementById('hero-card-area').innerHTML = `<div class="hero-card rest-hero"><div class="rest-hero-content"><div class="rest-emoji">&#128524;</div><div class="rest-title">Dzien odpoczynku</div><div class="rest-subtitle">Regeneracja jest kluczowa dla budowania sily.<br>Zadbaj o sen i nawodnienie.</div></div><div class="hero-badge-row" style="justify-content:center"><span class="hero-badge hero-badge-purple">Tydzien ${cw+1} z 4</span></div></div>`;
+    document.getElementById('hero-card-area').innerHTML = `<div class="hero-card rest-hero"><div class="rest-hero-content"><div class="rest-title">Dzien odpoczynku</div><div class="rest-subtitle">Regeneracja jest kluczowa dla budowania sily.<br>Zadbaj o sen i nawodnienie.</div></div><div class="hero-badge-row" style="justify-content:center"><span class="hero-badge hero-badge-purple">Tydzien ${cw+1} z 4</span></div></div>`;
     document.getElementById('today-content').innerHTML = '';
   }
   renderMonthCalendar();
