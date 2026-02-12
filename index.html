@@ -50,10 +50,10 @@ body {
 }
 body::before {
   content: '';
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=50') center/cover no-repeat fixed;
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 300px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,230,176,0.06) 0%, transparent 70%);
   pointer-events: none; z-index: 0;
-  opacity: 0.09;
 }
 
 /* ====== HEADER ====== */
@@ -76,15 +76,13 @@ body::before {
 }
 /* ====== HERO CARD ====== */
 .hero-card {
-  background: rgba(255,255,255,0.035);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: var(--card);
+  border: 1px solid var(--card-border);
   border-radius: 22px;
   padding: 24px;
   margin: 8px 0 16px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .hero-top {
   display: flex; align-items: flex-start; justify-content: space-between;
@@ -392,13 +390,11 @@ body::before {
 
 /* ====== STATS PAGE ====== */
 .stats-section {
-  background: rgba(255,255,255,0.025);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--card);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 20px; margin: 12px 0;
   position: relative; overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .stats-section::before {
   content: '';
@@ -550,20 +546,19 @@ body::before {
 
 /* ====== CARDS ====== */
 .training-card {
-  background: rgba(255,255,255,0.025);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--card);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 22px;
   margin: 14px 0;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .training-card::before {
   content: '';
-  position: absolute; top: 0; left: 20px; right: 20px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,230,176,0.3), transparent);
+  position: absolute; top: 0; left: 20px; right: 20px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  opacity: 0.2;
 }
 .training-card h2 {
   font-size: 17px; font-weight: 800; color: var(--green); margin-bottom: 3px;
@@ -627,18 +622,17 @@ body::before {
 
 /* ====== ABS ====== */
 .abs-card {
-  background: rgba(255,173,86,0.03);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,173,86,0.08);
+  background: linear-gradient(135deg, rgba(20,18,10,0.8), rgba(22,18,10,0.6));
+  border: 1px solid rgba(255,173,86,0.1);
   border-radius: var(--radius);
   padding: 22px; margin: 12px 0;
   position: relative; overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,173,86,0.04);
 }
 .abs-card::before {
   content: '';
-  position: absolute; top: 0; left: 20px; right: 20px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,173,86,0.3), transparent);
+  position: absolute; top: 0; left: 20px; right: 20px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+  opacity: 0.15;
 }
 .abs-card h3 { font-size: 16px; color: var(--orange); font-weight: 800; margin-bottom: 3px; }
 .abs-card .subtitle { font-size: 11px; color: var(--text-dim); margin-bottom: 16px; font-weight: 500; }
@@ -647,12 +641,10 @@ body::before {
 /* ====== MONTH CALENDAR ====== */
 .month-calendar {
   margin: 24px 0;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--card);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 20px 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .month-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -765,14 +757,12 @@ body::before {
 .next-item {
   display: flex; align-items: center;
   padding: 14px 16px;
-  background: rgba(255,255,255,0.025);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.05);
+  background: var(--card);
+  border: 1px solid var(--card-border);
   border-left: 3px solid var(--green);
   border-radius: var(--radius);
   margin-bottom: 8px; cursor: pointer;
   transition: all 0.15s;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
 .next-item:active { background: var(--card-hover); transform: scale(0.98); }
 .next-date { width: 44px; text-align: center; margin-right: 14px; }
@@ -844,12 +834,10 @@ body::before {
 
 /* ====== SETTINGS ====== */
 .settings-section {
-  background: rgba(255,255,255,0.025);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--card);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 20px; margin-bottom: 10px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .settings-section h3 { font-size: 13px; margin-bottom: 12px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
 .settings-section label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
@@ -1098,7 +1086,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '16';
+const APP_VERSION = '17';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
