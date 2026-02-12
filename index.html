@@ -839,10 +839,72 @@ body::before {
 }
 .settings-section input[type="date"]:focus { border-color: var(--green); background: rgba(0,230,176,0.03); }
 .settings-section p { font-size: 11px; color: var(--text-dim); margin-top: 12px; line-height: 1.6; }
-.calibrate-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 8px; margin-top: 12px;
+.calibrate-cards {
+  display: flex; flex-direction: column;
+  gap: 8px; margin-top: 4px;
 }
+.calibrate-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: var(--radius-sm);
+  cursor: pointer; transition: all 0.15s;
+  font-family: inherit;
+  text-align: left; width: 100%;
+  color: inherit;
+}
+.calibrate-card:active { transform: scale(0.97); }
+.calibrate-card.selected {
+  background: rgba(0,230,176,0.08);
+  border-color: rgba(0,230,176,0.25);
+}
+.calibrate-card-num {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.04);
+  color: var(--text-mid);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.15s;
+}
+.calibrate-card.selected .calibrate-card-num {
+  background: linear-gradient(135deg, rgba(0,230,176,0.15), rgba(0,200,220,0.1));
+  color: var(--green);
+  border-color: rgba(0,230,176,0.25);
+}
+.calibrate-card-info { flex: 1; min-width: 0; }
+.calibrate-card-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+.calibrate-card-muscles { font-size: 11px; color: var(--text-dim); font-weight: 500; }
+.calibrate-card-check {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.calibrate-card.selected .calibrate-card-check {
+  background: var(--green);
+  border-color: var(--green);
+}
+.calibrate-card.selected .calibrate-card-check::after {
+  content: '✓'; color: #000; font-size: 12px; font-weight: 900;
+}
+.start-date-hint {
+  font-size: 11px; color: var(--text-dim);
+  margin-top: 10px; line-height: 1.6;
+}
+.settings-info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.settings-info-row:last-child { border-bottom: none; }
+.settings-info-label { font-size: 13px; color: var(--text-mid); font-weight: 500; }
+.settings-info-val { font-size: 13px; color: var(--text-dim); font-weight: 600; }
 .calibrate-btn {
   padding: 14px 0;
   background: rgba(255,255,255,0.035);
@@ -915,21 +977,20 @@ body::before {
 <div id="page-settings" class="page">
   <div class="page-title">Ustawienia</div>
   <div class="settings-section">
-    <h3>Data startu cyklu</h3>
-    <label>Poniedzialek pierwszego tygodnia cyklu</label>
-    <input type="date" id="start-date-input">
-    <p>Ustaw poniedzialek tygodnia od ktorego zaczynasz Tydzien 1.</p>
+    <h3>Ostatni trening</h3>
+    <label>Kliknij trening, ktory robiles ostatnio</label>
+    <div class="calibrate-cards" id="calibrate-cards"></div>
   </div>
   <div class="settings-section">
-    <h3>Kalibracja treningow</h3>
-    <label>Jaki trening miales dzisiaj lub ostatnio?</label>
-    <div class="calibrate-grid">
-      <button class="calibrate-btn" onclick="calibrate(0)">T1</button>
-      <button class="calibrate-btn" onclick="calibrate(1)">T2</button>
-      <button class="calibrate-btn" onclick="calibrate(2)">T3</button>
-      <button class="calibrate-btn" onclick="calibrate(3)">T4</button>
-    </div>
-    <p>Kliknij numer treningu zeby skalibrować kolejnosc.</p>
+    <h3>Poczatek cyklu</h3>
+    <label>Od kiedy trenujesz w tym cyklu?</label>
+    <input type="date" id="start-date-input">
+    <div class="start-date-hint" id="start-date-hint"></div>
+  </div>
+  <div class="settings-section settings-info">
+    <h3>Informacje</h3>
+    <div class="settings-info-row"><span class="settings-info-label">Wersja</span><span class="settings-info-val" id="settings-version"></span></div>
+    <div class="settings-info-row"><span class="settings-info-label">Dane</span><span class="settings-info-val">Zapisane lokalnie</span></div>
   </div>
 </div>
 
@@ -1035,7 +1096,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '19';
+const APP_VERSION = '20';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.setItem('appVersion', APP_VERSION);
 }
@@ -1221,6 +1282,7 @@ function render() {
   document.getElementById('next-list').innerHTML = nextHtml;
   document.getElementById('cycle-info').textContent = '';
   document.getElementById('start-date-input').value = getStartDate().toISOString().split('T')[0];
+  renderCalibrateCards();
   renderStats();
 }
 
@@ -1505,6 +1567,30 @@ function calibrate(idx) {
   let d = new Date(today);
   for (let i = 0; i < 7; i++) { if (isTrainingDay(d)) break; d.setDate(d.getDate() - 1); }
   setStartTrainingOffset(((idx - countTrainingDaysBefore(d)) % 4 + 4) % 4);
+  renderCalibrateCards();
+  showToast('done', '&#10003;', TRAININGS[idx].name + ' ustawiony');
+}
+
+function renderCalibrateCards() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  let d = new Date(today);
+  for (let i = 0; i < 7; i++) { if (isTrainingDay(d)) break; d.setDate(d.getDate() - 1); }
+  const currentIdx = isTrainingDay(d) ? ((countTrainingDaysBefore(d) + getStartTrainingOffset()) % 4 + 4) % 4 : -1;
+  let html = '';
+  TRAININGS.forEach((t, i) => {
+    html += `<button class="calibrate-card${i === currentIdx ? ' selected' : ''}" onclick="calibrate(${i})">
+      <div class="calibrate-card-num">T${i+1}</div>
+      <div class="calibrate-card-info">
+        <div class="calibrate-card-name">${t.name}</div>
+        <div class="calibrate-card-muscles">${t.muscles}</div>
+      </div>
+      <div class="calibrate-card-check"></div>
+    </button>`;
+  });
+  document.getElementById('calibrate-cards').innerHTML = html;
+  document.getElementById('settings-version').textContent = 'v' + APP_VERSION;
+  const sd = getStartDate();
+  document.getElementById('start-date-hint').textContent = 'Cykl startuje od ' + DAY_NAMES_FULL[getDayOfWeek(sd)] + ', ' + sd.getDate() + ' ' + MONTH_NAMES_FULL[sd.getMonth()];
 }
 
 render();
