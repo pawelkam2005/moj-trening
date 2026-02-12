@@ -4,8 +4,8 @@
   "description": "Plan treningowy 4 Days Gym",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#050508",
-  "theme_color": "#050508",
+  "background_color": "#08080c",
+  "theme_color": "#08080c",
   "icons": [
     {
       "src": "icon-192.png",
