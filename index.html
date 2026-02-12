@@ -50,10 +50,10 @@ body {
 }
 body::before {
   content: '';
-  position: fixed; top: 0; left: 0; right: 0;
-  height: 300px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(0,230,176,0.06) 0%, transparent 70%);
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=50') center/cover no-repeat fixed;
   pointer-events: none; z-index: 0;
+  opacity: 0.07;
 }
 
 /* ====== HEADER ====== */
@@ -76,34 +76,22 @@ body::before {
 }
 /* ====== HERO CARD ====== */
 .hero-card {
+  background: var(--card);
   border: 1px solid var(--card-border);
   border-radius: 22px;
   padding: 24px;
   margin: 8px 0 16px;
   position: relative;
   overflow: hidden;
-  background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=60') center/cover no-repeat;
 }
 .hero-card::before {
   content: '';
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(135deg, rgba(8,8,12,0.88), rgba(8,8,12,0.75));
+  background: radial-gradient(ellipse at 90% 10%, rgba(0,230,176,0.06) 0%, transparent 50%);
   pointer-events: none;
-}
-.hero-card::after {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(ellipse at 90% 10%, rgba(0,230,176,0.08) 0%, transparent 50%);
-  pointer-events: none;
-}
-.hero-card.rest-hero {
-  background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=60');
 }
 .hero-card.rest-hero::before {
-  background: linear-gradient(135deg, rgba(8,8,12,0.9), rgba(8,8,12,0.8));
-}
-.hero-card.rest-hero::after {
-  background: radial-gradient(ellipse at 90% 10%, rgba(139,108,255,0.06) 0%, transparent 50%);
+  background: radial-gradient(ellipse at 90% 10%, rgba(139,108,255,0.05) 0%, transparent 50%);
 }
 .hero-top {
   display: flex; align-items: flex-start; justify-content: space-between;
@@ -198,6 +186,7 @@ body::before {
 .action-row {
   display: flex; gap: 10px;
   margin: 18px 0 0;
+  position: relative; z-index: 1;
 }
 .action-btn {
   flex: 1;
@@ -1105,7 +1094,7 @@ const MONTH_NAMES_FULL = ["stycznia","lutego","marca","kwietnia","maja","czerwca
 const MONTH_NAMES_TITLE = ["Styczen","Luty","Marzec","Kwiecien","Maj","Czerwiec","Lipiec","Sierpien","Wrzesien","Pazdziernik","Listopad","Grudzien"];
 
 let currentMonthOffset = 0;
-const APP_VERSION = '14';
+const APP_VERSION = '15';
 if (localStorage.getItem('appVersion') !== APP_VERSION) {
   localStorage.removeItem('trainingStartDate');
   localStorage.removeItem('trainingOffset');
@@ -1275,8 +1264,8 @@ function render() {
   if (tr) {
     const exCount = tr.training.exercises.length + (tr.hasAbs ? 2 : 0);
     const setCount = tr.training.exercises.reduce((s,e) => s + e.sets, 0);
-    document.getElementById('hero-card-area').innerHTML = `<div class="hero-card"><div class="hero-top"><div class="hero-info"><div class="hero-label">Dzisiejszy trening</div><div class="hero-title">${tr.training.name}</div><div class="hero-subtitle">${tr.training.muscles}</div></div><div class="hero-number">T${tr.trainingIdx+1}</div></div><div class="hero-badge-row"><span class="hero-badge hero-badge-green">${exCount} cwiczen</span><span class="hero-badge hero-badge-green">${setCount} serii</span>${tr.hasAbs ? '<span class="hero-badge hero-badge-orange">+ brzuch</span>' : ''}<span class="hero-badge hero-badge-purple">Tydzien ${cw+1}</span></div></div>`;
-    document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today, true) + `<div class="action-row"><button class="action-btn action-done" onclick="markDone()">&#10003; Zrobione</button><button class="action-btn action-skip" onclick="skipTraining()">&#10005; Pomijam</button></div>`;
+    document.getElementById('hero-card-area').innerHTML = `<div class="hero-card"><div class="hero-top"><div class="hero-info"><div class="hero-label">Dzisiejszy trening</div><div class="hero-title">${tr.training.name}</div><div class="hero-subtitle">${tr.training.muscles}</div></div><div class="hero-number">T${tr.trainingIdx+1}</div></div><div class="hero-badge-row"><span class="hero-badge hero-badge-green">${exCount} cwiczen</span><span class="hero-badge hero-badge-green">${setCount} serii</span>${tr.hasAbs ? '<span class="hero-badge hero-badge-orange">+ brzuch</span>' : ''}<span class="hero-badge hero-badge-purple">Tydzien ${cw+1}</span></div><div class="action-row" style="margin-top:18px"><button class="action-btn action-done" onclick="markDone()">&#10003; Zrobione</button><button class="action-btn action-skip" onclick="skipTraining()">&#10005; Pomijam</button></div></div>`;
+    document.getElementById('today-content').innerHTML = renderTrainingHtml(tr, today, true);
   } else {
     document.getElementById('hero-card-area').innerHTML = `<div class="hero-card rest-hero"><div class="rest-hero-content"><div class="rest-title">Dzien odpoczynku</div><div class="rest-subtitle">Regeneracja jest kluczowa dla budowania sily.<br>Zadbaj o sen i nawodnienie.</div></div><div class="hero-badge-row" style="justify-content:center"><span class="hero-badge hero-badge-purple">Tydzien ${cw+1} z 4</span></div></div>`;
     document.getElementById('today-content').innerHTML = '';

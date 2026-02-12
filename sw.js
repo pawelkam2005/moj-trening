@@ -1,4 +1,4 @@
-const CACHE_NAME = 'moj-trening-v14';
+const CACHE_NAME = 'moj-trening-v15';
 const ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
